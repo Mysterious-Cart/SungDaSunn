@@ -15,6 +15,16 @@ builder.Services.AddPooledDbContextFactory<CrustDb_Context>(v =>
     v.UseMySql(builder.Configuration.GetConnectionString("Crust_DBConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Crust_DBConnection"))
 ));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.AllowAnyHeader();
+            builder.AllowAnyMethod();
+        });
+});
+
 builder.Services.AddGraphQLServer() 
     .AddInMemorySubscriptions()
     .AddQueryType<Query>();
@@ -52,6 +62,7 @@ app.UseEndpoints(endpoint =>
     endpoint.MapGraphQL();
 });
 
+app.UseCors("AllowSpecificOrigin");
 app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
