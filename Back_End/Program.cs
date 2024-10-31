@@ -20,12 +20,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         builder =>
         {
-            builder.AllowAnyHeader();
-            builder.AllowAnyMethod();
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((Host) => (true));
+
         });
 });
 
-builder.Services.AddGraphQLServer() 
+builder.Services.AddGraphQLServer()
     .AddInMemorySubscriptions()
     .AddQueryType<Query>();
 
@@ -56,16 +59,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseRouting();
-
-app.UseEndpoints(endpoint =>
-{
-    endpoint.MapGraphQL();
-});
-
-app.UseCors("AllowSpecificOrigin");
+app.MapGraphQL();
 app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.MapGraphQLWebSocket();
 app.MapControllers();
+app.UseCors("AllowSpecificOrigin");
 app.Run();
