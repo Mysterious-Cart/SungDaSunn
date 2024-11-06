@@ -1,6 +1,8 @@
 import './App.css'
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, from} from '@apollo/client'
-import {GetUser} from ""
+import GetUser from "./Components/GetUser"
+import MainPage from './Pages/MainPage';
+
 const link = from([
   new HttpLink({uri: "http://156.67.216.145:90/graphql/"}),
 ]);
@@ -12,9 +14,7 @@ const client = new ApolloClient({
 
 function App() {
   return <ApolloProvider client={client}>
-    <body>
-
-    </body>
+    <MainPage/>
   </ApolloProvider>
 }
 
