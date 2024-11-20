@@ -2,23 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useLazyQuery, gql } from "@apollo/client";
 import { Load_User } from "../Graphql/Queries";
 
-function GetUser(){
+function GetUser({ callback }){
 
     const [Get_User,{error, loading, data}] = useLazyQuery(Load_User)
-    const [user, setUser] = useState([])
     if(error){console.log(error); return}
+
     useEffect(() => 
     {
-        console.log(data);
+        Get_User();
+        if(loading){
+            console.log("Loading..")
+        }
+        if(data){
+            callback(data.user);
+        }
     }
     , [data])
-
-    return (
-       <div>
-            <button onClick={Get_User}/>
-            <h1> David</h1>
-       </div>
-    );
+    
+    return <div></div>;
 };
 
 export default GetUser;
