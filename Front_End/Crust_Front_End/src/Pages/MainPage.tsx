@@ -1,33 +1,21 @@
 import "./MainPage.css"
-import GetUser from "../Components/GetUser"
+import UserProfileList from "../Components/UserProfileList"
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime"
-
-
+import { Card } from "@mui/material";
 
 function MainPage(){
-    const GetUserData = async () => {
-        const userList = [];
-        <GetUser callback={userList}/>
-        setUser(userList)
-    }
-
-    const [user, setUser] = useState([])
-    useEffect(() => {
-        GetUserData()
-
-    })
-
     
     return(
-        <div>
-            <div style={{width: "30%", maxWidth:"300px", height: "100dvh", backgroundColor: "#343434"}}>
-                
-            </div>
+        <div style={{width:"100%"}}>
+            <Card style={{width: "100%", maxWidth:"300px", height: "100dvh"}}>
+                <UserProfileList width="100%" height="100%"/>
+            </Card>
             <div>
-                
+
             </div>
         </div>
+            
     );
 }
 
