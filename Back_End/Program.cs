@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Back_End;
 using Back_End.Request_Handler;
 using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +29,12 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddGraphQLServer()
-    .AddInMemorySubscriptions()
-    .AddQueryType<Query>();
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddSubscriptionType<Subscription>()
+    .AddMutationType<Mutation>()
+    .AddInMemorySubscriptions();
 
 builder.Services.AddDbContext<CrustDb_Context>(options =>
 {
@@ -47,9 +51,8 @@ using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<CrustDb_Context>();
         context.Database.Migrate();
-        context.Database.EnsureCreated();
-        var databaseCreator = (context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator) ;
-        databaseCreator.CreateTables();
+        var databaseCreator = context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+        await databaseCreator.CreateAsync();
 
     }
     catch (Exception e)
@@ -58,12 +61,12 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseWebSockets();
 app.UseRouting();
 app.MapGraphQL();
-app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.MapGraphQLWebSocket();
 app.MapControllers();
+app.MapGraphQLWebSocket();
 app.UseCors("AllowSpecificOrigin");
 app.Run();

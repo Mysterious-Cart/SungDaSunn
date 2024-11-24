@@ -9,5 +9,11 @@ namespace Back_End.Request_Handler
         {
             return await service.GetUser();
         }
+
+        public async Task<IEnumerable<Messages>> GetMessages([Service] Crust_Service service, [GraphQLType("Int!")] ulong GroupId, DateTime From, DateTime To){
+            return await service.GetMessagesFrom(GroupId);
+        }
+
+
     }
 }

@@ -46,11 +46,12 @@ public class CrustDb_Context : DbContext
 
         var Messages = modelBuilder.Entity<Messages>();
         Messages.Property(i => i.Id).IsRequired();
+        Messages.Property(i => i.SenderId).IsRequired();
         Messages.Property(i => i.GroupId).IsRequired();
         Messages.Property(i => i.DateTime).IsRequired();
         Messages.HasOne(i => i.Group).WithMany(i => i.Messages);
         Messages.HasKey(i => i.Id);
-
+        Messages.HasOne(i => i.Sender).WithMany(i => i.Messages);
 
     }
 }

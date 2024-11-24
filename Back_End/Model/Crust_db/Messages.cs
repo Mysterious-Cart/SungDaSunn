@@ -8,9 +8,15 @@ public class Messages
 {
     [GraphQLType("Int!")] 
     public ulong Id { get; set; }
+
+    [GraphQLType("Int!")]
+    public ulong SenderId {get; set;}
+    
+    public User? Sender {get; set;}
+
     [GraphQLType("Int!")]
     public ulong GroupId { get; set; }
-    public Group Group { get; set; }
+    public Group? Group { get; set; }
     public DateTime DateTime { get; set; }
-    public string Message { get; set; }
+    public string? Message { get; set; }
 }
