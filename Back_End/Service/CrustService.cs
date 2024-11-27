@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Components;
 using Back_End.Model;
 using Back_End.Model.Crust_db;
 using Microsoft.EntityFrameworkCore;
 using HotChocolate.Subscriptions;
+using System.Net.Mime;
 
 namespace Back_End;
 public class Crust_Service
@@ -22,17 +22,18 @@ public class Crust_Service
         this.context = context;
         this.sender = sender;
     }
-
-    public async Task<IQueryable<User>> GetUser()
+    public async Task<IQueryable<User>> GetUser(    )
     {
         var item = context.User
             .Include(i => i.Groups)
-            .Include("Groups.GroupInfo")
-            .AsQueryable();
+            .Include("Groups.GroupInfo");
 
         return await Task.FromResult(item);
     }
-
+    public async Task<IQueryable<User?>> GetFriendOfUser(ulong userId){
+        var item = context.User.Include("Friend.Friend").SelectMany(i => i.Friend!.Select(i => i.Friend));
+        return await Task.FromResult(item);
+    }
     public async Task<IQueryable<Messages>> GetMessagesFrom(ulong GroupId){
         var item = context.Groups
                         .Include(i => i.Messages)
@@ -53,14 +54,30 @@ public class Crust_Service
         try{
             await context.Messages.AddAsync(newMessages);
             await context.SaveChangesAsync();
-        }catch(Exception exc){
+        }catch{
             return false;
         }
         
         await sender.SendAsync(GroupId.ToString(), newMessages);
         return true;
     }
+    public async Task<bool> createUser(string name, string password, string email = ""){
+        User newUser = new User{
+            Id = generateId(),
+            Name = name,
+            Password = password,
+            Email = email
+        };
 
+        try{
+            await context.User.AddAsync(newUser);
+            await context.SaveChangesAsync();
+        }catch{
+            return false;
+        }
+        return true;
+    }
+ 
     private ulong generateId() => (ulong)Snippy.LongRandom(0, 100000000000000000, new Random());
 
 

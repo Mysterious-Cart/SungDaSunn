@@ -38,8 +38,10 @@ builder.Services
 
 builder.Services.AddDbContext<CrustDb_Context>(options =>
 {
-    options.UseMySql(builder.Configuration.GetConnectionString("Crust_DBConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Crust_DBConnection")));
+    options.UseMySql(builder.Configuration.GetConnectionString("Crust_DBConnection"),
+    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Crust_DBConnection")));
 });
+
 builder.Services.AddControllers();
 builder.Services.AddScoped<Crust_Service>();
 
@@ -47,17 +49,14 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    try
-    {
+    try{
         var context = scope.ServiceProvider.GetRequiredService<CrustDb_Context>();
         context.Database.Migrate();
-        var databaseCreator = context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
-        await databaseCreator.CreateAsync();
-
+        RelationalDatabaseCreator? databaseCreator = context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+        await databaseCreator!.CreateAsync();
     }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
+    catch (Exception e){
+        Console.WriteLine(e.Data);
     }
 }
 
