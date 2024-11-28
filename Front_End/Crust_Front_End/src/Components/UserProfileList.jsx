@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import GetUser from "./Conn/GetUser";
-import { Card, Stack, TextField, Paper, ListItem, Grid, List, ListItemText, Typography, Avatar, Grid2, Skeleton } from "@mui/material";
+import './UserProfileList.jsx.css'
+import ImageIcon from '@mui/icons-material/Image';
+import { TransitionGroup } from 'react-transition-group';
+import { Card, Stack, TextField, Paper, ListItem, Grid, List, ListItemText, Typography, Avatar, Grid2, Skeleton, ListItemIcon, Collapse, Badge, styled } from "@mui/material";
 
-function UserProfileList(width, height){
+function UserProfileList(width, height, Filter){
 
     const [user, setUser] = useState([])
+    const [dUser, setdUser] = useState([])
+    const [FilterText, SetFilter] = useState("")
+    
 
     const StoreRecieveUser = (userArray) => {
         setUser(userArray.user)
@@ -14,9 +20,9 @@ function UserProfileList(width, height){
         if( user === undefined){
             
         }else{
-            console.log(user)
+            setdUser(user.filter(user => user.name.toLowerCase().includes(FilterText.toLowerCase())))
         }
-    },[user])
+    },[user, FilterText])
 
     if(user === undefined && user.length === 0){return <div>Loading...</div>}
 
@@ -24,31 +30,32 @@ function UserProfileList(width, height){
         <GetUser result={StoreRecieveUser}/>
         <div style={{heigh:{height}, minHeight:{height}, width:width, backgroundColor:"transparent"}}>
             <Stack style={{padding:"10px"}}>
-                <TextField size="small" placeholder="Search..."/>
-                <Typography variant="p" style={{marginTop:"10px", marginLeft:"5px", height:"10px",color:"grayText"}}>Direct Message</Typography>
+                <TextField size="small" placeholder="Search..." onChange={(e) => SetFilter(e.target.value)} value={FilterText}/>
             </Stack>
             <List>
+                <TransitionGroup>
                 {
-                    user.map((EachUser,index) => (
-                        <ListItem key={index}>
-                            <Grid2 container columnGap={1}>
-                                <Grid2 size={5} alignContent={"center"}>
-                                    <Avatar/>
-                                </Grid2>
-                                <Grid2 size={6}>
-                                    <ListItemText primary={EachUser.name} secondary={"loading.."}>
-                                        
-                                    </ListItemText>
-                                </Grid2>
-                                
-                            </Grid2>
-                        </ListItem>
+                    dUser.map((EachUser,index) => (
+                        <Collapse key={index}>
+                            <ListItem  style={{borderRadius:"10px"}} className="User">
+                                <ListItemIcon>
+                                <Badge badgeContent={6} invisible={false} slotProps={{badge:{className: "badge", style:{backgroundColor:"rgb(236, 100, 75)"}}}}><Avatar><ImageIcon/></Avatar></Badge>
+                                </ListItemIcon>
+                                <ListItemText primary={EachUser.name} secondary={"loading.."}></ListItemText>
+                            </ListItem>
+                        </Collapse>
+                        
                     ))
                 }
-                
+                </TransitionGroup>
             </List>
         </div>
     </div>
+
+
 }
 
+
+
 export default UserProfileList;
+

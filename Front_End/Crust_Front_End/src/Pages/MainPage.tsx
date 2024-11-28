@@ -1,20 +1,20 @@
 import "./MainPage.css"
 import UserProfileList from "../Components/UserProfileList"
+import HomeIcon from '@mui/icons-material/Home'
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime"
-import { AppBar, Avatar, Card, CardHeader, Grid2, IconButton, Stack, TextField, Toolbar, Fab, Paper } from "@mui/material";
+import { AppBar, Avatar, Card, CardHeader, Grid2, IconButton, Stack,Container, TextField, Toolbar, Fab, Paper, Divider } from "@mui/material";
 
 function MainPage(){
-    
     return(
-        <Grid2 container spacing={1} padding={2} paddingBottom={0} paddingRight={0} style={{height:"100dvh"}}>
-            <Grid2 size={0.4}>
-                <Stack>
-                    <Avatar/>
-                </Stack>
-                
+        <Grid2 container spacing={1} padding={2} paddingBottom={2} paddingRight={2} style={{height:"100dvh"}}>
+            <Grid2 size={0.4} minWidth={"50px"}>
+                {/*SideBar*/}
+
+                <Avatar><HomeIcon/></Avatar>
             </Grid2>
             <Grid2 size={2}>
+                {/*Second SideBar*/}
                 <Card style={{width: "100%", height:"98dvh"}}>
                     <UserProfileList width="100%" height="100%"/>
                 </Card>
@@ -22,8 +22,8 @@ function MainPage(){
             <Grid2 size={"grow"}>
                 <Paper style={{borderRadius:"0px", padding:"10px"}}>
                     <Avatar></Avatar>
-                </Paper>
-                <Card style={{height:"92dvh", borderRadius:"0px"}} elevation={2}>
+                </Paper>    
+                <Card style={{height:"92dvh", borderRadius:"0px"}}>
                     <Grid2 container>
                         <Grid2 size={9}>
                             <Grid2 container direction={"column"}>
@@ -40,9 +40,7 @@ function MainPage(){
                             </Grid2>
                         </Grid2>
                         <Grid2 size={"grow"}>
-                            <Paper elevation={1} style={{height:"92dvh", width:"100%", borderRadius:"0px"}}>
-                                
-                            </Paper>
+                            
                         </Grid2>
                     </Grid2>
                 </Card>

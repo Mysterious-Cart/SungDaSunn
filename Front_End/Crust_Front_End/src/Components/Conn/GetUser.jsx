@@ -4,21 +4,25 @@ import { Load_User } from "../../Graphql/Queries";
 
 function GetUser({result}){
     
-    const [LoadUser,{error, loading, data}] = useLazyQuery(Load_User)
-    if(error){console.log(error); return}
+    const [refetch,{error, loading, data}] = useLazyQuery(Load_User)
+    if(error){console.log(error); return<></>}
 
     useEffect(() => 
     {
-        LoadUser();
-        
-        if(data){
+        const fetchdata = async () => {
+            await refetch();
+        } 
+
+        fetchdata();    
+
+        if(data && data.length !== 0){
             result(data);
         }
         
     }
-    , [LoadUser,data])
+    , [data])
     
-    return <div></div>;
+    return <></>;
 };
 
 export default GetUser;
