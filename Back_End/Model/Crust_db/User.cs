@@ -9,9 +9,11 @@ namespace Back_End.Model.Crust_db
 {
 	public class User
 	{
-        [GraphQLType("Int!")]
+        [GraphQLType(typeof(UnsignedLongType))]
         public ulong Id { get; set; }
 		public required string Name { get; set; }
+
+		[GraphQLType(typeof(EmailAddressType))]
 		public string Email { get; set; } = "";
 		public required string Password { get; set; }
 		public ICollection<UserGroups>? Groups { get; set; }
@@ -20,11 +22,13 @@ namespace Back_End.Model.Crust_db
 
 		public ICollection<FriendList>? Friend {get; set;}
 
+		[GraphQLIgnore]
 		[AllowNull]
 		public ICollection<FriendList> _Friend {get; set;}
 
 		public ICollection<FriendRequest>? RequestsFrom {get; set;}
 
+		[GraphQLIgnore]
 		[AllowNull]
 		public ICollection<FriendRequest> _RequestsTo {get; set;}
 	}

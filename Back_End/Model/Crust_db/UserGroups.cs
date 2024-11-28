@@ -8,13 +8,13 @@ namespace Back_End.Model.Crust_db
 {
 	public class UserGroups
 	{
-        [GraphQLType("Int!")]
+        [GraphQLType(typeof(UnsignedLongType))]
         public ulong UserId { get; set; }
 
         [AllowNull]
 		public User User { get; set; }
 
-        [GraphQLType("Int!")]
+        [GraphQLType(typeof(UnsignedLongType))]
         public ulong GroupId { get; set; }
         
         [AllowNull]
