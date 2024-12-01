@@ -5,7 +5,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 
 const link = from([
-  new HttpLink({uri: "http://156.67.216.145:90/graphql/"}),
+  new HttpLink({uri: "http://156.67.216.145:5276/graphql/"}),
 ]);
 
 const darkTheme = createTheme({

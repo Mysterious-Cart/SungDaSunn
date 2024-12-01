@@ -13,14 +13,14 @@ function MainPage(){
 
                 <Avatar><HomeIcon/></Avatar>
             </Grid2>
-            <Grid2 size={2}>
+            <Grid2 size={2} minWidth={"150px"}>
                 {/*Second SideBar*/}
                 <Card style={{width: "100%", height:"98dvh"}}>
                     <UserProfileList width="100%" height="100%"/>
                 </Card>
             </Grid2>
             <Grid2 size={"grow"}>
-                <Paper style={{borderRadius:"0px", padding:"10px"}}>
+                <Paper style={{borderRadius:"0px", padding:"10px"}} elevation={4}>
                     <Avatar></Avatar>
                 </Paper>    
                 <Card style={{height:"92dvh", borderRadius:"0px"}}>

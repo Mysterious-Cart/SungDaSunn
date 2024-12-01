@@ -29,8 +29,11 @@ function UserProfileList(width, height, Filter){
     return <div>
         <GetUser result={StoreRecieveUser}/>
         <div style={{heigh:{height}, minHeight:{height}, width:width, backgroundColor:"transparent"}}>
-            <Stack style={{padding:"10px"}}>
+            <Stack style={{padding:"10px"}} gap={"10px"}>
                 <TextField size="small" placeholder="Search..." onChange={(e) => SetFilter(e.target.value)} value={FilterText}/>
+                <Typography variant={"caption"} color={"textSecondary"} marginLeft={"10px"}>
+                    Direct Message
+                </Typography>
             </Stack>
             <List>
                 <TransitionGroup>
