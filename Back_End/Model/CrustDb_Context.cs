@@ -13,6 +13,7 @@ public class CrustDb_Context : DbContext
     public DbSet<UserGroups> UserGroups { get; set; }
     public DbSet<FriendList> FriendLists {get; set;}
     public DbSet<FriendRequest> FriendRequests {get; set;}
+    public DbSet<LoginToken> SessionToken {get; set;}
     public CrustDb_Context()
     {
 
@@ -64,5 +65,9 @@ public class CrustDb_Context : DbContext
         FriendRequest.HasKey(i => i.Id);
         FriendRequest.HasOne(i => i.Sender).WithMany(i => i._RequestsTo).HasForeignKey(i => i.SenderId);
         FriendRequest.HasOne(i => i.RequestTo).WithMany(i => i.RequestsFrom).HasForeignKey(i => i.RequestToId);
+
+        var LoginToken = modelBuilder.Entity<LoginToken>();
+        LoginToken.HasKey(i => i.SessionId);
+        LoginToken.HasOne(i => i.user);
     }
 }

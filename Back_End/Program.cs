@@ -34,6 +34,7 @@ builder.Services
     .AddQueryType<Query>()
     .AddSubscriptionType<Subscription>()
     .AddMutationType<Mutation>()
+    .AddMutationConventions()
     .AddInMemorySubscriptions();
 
 builder.Services.AddDbContext<CrustDb_Context>(options =>

@@ -8,6 +8,7 @@ namespace Back_End.Request_Handler
 {
     public class Subscription{
 
+        [GraphQLDescription("Listen to a group given by the Id. Waiting for new messages.")]
         [Subscribe(With = nameof(SubscribeToChannelAsync))]
         public Messages OnMessageReceive([EventMessage] Messages messages) => messages;
         public async IAsyncEnumerable<Messages> SubscribeToChannelAsync([Service]ITopicEventReceiver receiver,int GroupId) {

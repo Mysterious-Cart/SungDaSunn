@@ -10,12 +10,14 @@ namespace Back_End.Model.Crust_db
 	public class User
 	{
         [GraphQLType(typeof(UnsignedLongType))]
+		[ID]
         public ulong Id { get; set; }
 		public required string Name { get; set; }
 
 		[GraphQLType(typeof(EmailAddressType))]
 		public string Email { get; set; } = "";
 		public required string Password { get; set; }
+		
 		public ICollection<UserGroups>? Groups { get; set; }
 
 		public ICollection<Messages>? Messages {get; set;}

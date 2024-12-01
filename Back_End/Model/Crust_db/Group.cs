@@ -8,7 +8,6 @@ public class Group : IGroups
 {
     [GraphQLType(typeof(UnsignedLongType))]
     public ulong Id { get; set; }
-
 	public required string Name { get; set; }
     public string Description { get; set; } = "";
 
