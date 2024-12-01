@@ -22,6 +22,52 @@ namespace Back_End.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Back_End.Model.Crust_db.FriendList", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Id"));
+
+                    b.Property<ulong>("FriendId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong>("UserId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FriendId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FriendLists");
+                });
+
+            modelBuilder.Entity("Back_End.Model.Crust_db.FriendRequest", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Id"));
+
+                    b.Property<ulong>("RequestToId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong>("SenderId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestToId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("FriendRequests");
+                });
+
             modelBuilder.Entity("Back_End.Model.Crust_db.Group", b =>
                 {
                     b.Property<ulong>("Id")
@@ -58,7 +104,6 @@ namespace Back_End.Migrations
                         .HasColumnType("bigint unsigned");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<ulong>("SenderId")
@@ -113,6 +158,65 @@ namespace Back_End.Migrations
                     b.ToTable("UserGroups", (string)null);
                 });
 
+            modelBuilder.Entity("LoginToken", b =>
+                {
+                    b.Property<ulong>("SessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("SessionId"));
+
+                    b.Property<DateTime>("Last_Login")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<ulong>("UserId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("SessionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SessionToken");
+                });
+
+            modelBuilder.Entity("Back_End.Model.Crust_db.FriendList", b =>
+                {
+                    b.HasOne("Back_End.Model.Crust_db.User", "Friend")
+                        .WithMany("_Friend")
+                        .HasForeignKey("FriendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Back_End.Model.Crust_db.User", "User")
+                        .WithMany("Friend")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Friend");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Back_End.Model.Crust_db.FriendRequest", b =>
+                {
+                    b.HasOne("Back_End.Model.Crust_db.User", "RequestTo")
+                        .WithMany("RequestsFrom")
+                        .HasForeignKey("RequestToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Back_End.Model.Crust_db.User", "Sender")
+                        .WithMany("_RequestsTo")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RequestTo");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("Back_End.Model.Crust_db.Messages", b =>
                 {
                     b.HasOne("Back_End.Model.Crust_db.Group", "Group")
@@ -151,6 +255,17 @@ namespace Back_End.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LoginToken", b =>
+                {
+                    b.HasOne("Back_End.Model.Crust_db.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("Back_End.Model.Crust_db.Group", b =>
                 {
                     b.Navigation("Messages");
@@ -160,9 +275,17 @@ namespace Back_End.Migrations
 
             modelBuilder.Entity("Back_End.Model.Crust_db.User", b =>
                 {
+                    b.Navigation("Friend");
+
                     b.Navigation("Groups");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("RequestsFrom");
+
+                    b.Navigation("_Friend");
+
+                    b.Navigation("_RequestsTo");
                 });
 #pragma warning restore 612, 618
         }
