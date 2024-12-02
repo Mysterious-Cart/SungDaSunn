@@ -14,3 +14,18 @@ export const Load_User = gql`
     }
 
 `
+
+export const Get_User_Friend = gql`
+    query GetUser{
+        user{
+            name
+            groups{
+                groupInfo{
+                    name
+                    id
+                }
+            }
+        }
+    }
+
+`

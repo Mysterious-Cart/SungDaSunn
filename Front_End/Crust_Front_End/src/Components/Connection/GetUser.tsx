@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useLazyQuery, gql } from "@apollo/client";
 import { Load_User } from "../../Graphql/Queries";
 
-function GetUser({result}){
+function useGetUser(){
     
     const [refetch,{error, loading, data}] = useLazyQuery(Load_User)
+    const [userlist, setUserList] = useState([])
     if(error){console.log(error); return<></>}
 
     useEffect(() => 
@@ -13,16 +14,19 @@ function GetUser({result}){
             await refetch();
         } 
 
-        fetchdata();    
-
         if(data && data.length !== 0){
-            result(data);
+            setUserList(data);
+        }else{
+            if(loading === false){
+                fetchdata();
+            }
+            
         }
         
     }
-    , [data])
+    , [data, loading])
     
-    return <></>;
+    return userlist;
 };
 
-export default GetUser;
+export default useGetUser;
