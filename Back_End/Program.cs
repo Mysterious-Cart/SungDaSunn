@@ -35,7 +35,8 @@ builder.Services
     .AddSubscriptionType<Subscription>()
     .AddMutationType<Mutation>()
     .AddMutationConventions()
-    .AddInMemorySubscriptions();
+    .AddInMemorySubscriptions()
+    .AddFiltering();
 
 builder.Services.AddDbContext<CrustDb_Context>(options =>
 {

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using HotChocolate;
 
 namespace Back_End.Model.Crust_db;
-public class Group : IGroups
+public class Group
 {
     [GraphQLType(typeof(UnsignedLongType))]
     public ulong Id { get; set; }
