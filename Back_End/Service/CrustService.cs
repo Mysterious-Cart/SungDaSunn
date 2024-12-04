@@ -6,6 +6,8 @@ using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
 using Back_End.Migrations;
+using System.Reflection.Metadata.Ecma335;
+using HotChocolate.Language;
 
 namespace Back_End;
 public class Crust_Service
@@ -220,15 +222,33 @@ public class Crust_Service
     }
     public async Task<ulong?> addFriend(ulong SenderId, ulong RequestToId)
     {
+        async Task<bool> isRequestExist() => await context.FriendRequests.AnyAsync(i => i.SenderId == SenderId && i.RequestToId == RequestToId);
+
+        if(await isRequestExist() == true){
+            throw new GraphQLException(ErrorBuilder
+                .New()
+                .SetMessage("Request already exist.")
+                .SetCode(errorCode.ALE.ToString())
+                .SetPath(["addFriend", "Crust_Service"])
+                .Build());
+        }
+
         var Id = generateId();
         FriendRequest newFriendRequest = new FriendRequest{
             Id = Id,
             SenderId = SenderId,
             RequestToId = RequestToId,
         };
+
         try{
             await context.FriendRequests.AddAsync(newFriendRequest);
             await context.SaveChangesAsync();
+            await sender.SendAsync(
+                RequestToId.ToString(), 
+                await context.FriendRequests
+                    .Include(i => i.Sender)
+                    .FirstAsync(i => i.Id == Id)
+            );
         }catch{
             return null;
         }
@@ -256,12 +276,4 @@ public class Crust_Service
         
     }
     private ulong generateId() => (ulong)Snippy.LongRandom(0, 1000000000, new Random());
-
-
-}
-
-public enum Approximate
-{
-    close,
-    exact,
 }

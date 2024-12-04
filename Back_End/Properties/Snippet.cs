@@ -10,3 +10,19 @@ public static class Snippy{
     }
     
 }
+
+public class Message_Result{
+    public bool Sent {get; set;}
+}
+
+public enum Approximate
+{
+    close,
+    exact,
+}
+
+public enum errorCode{
+    ALE, // Already Exist
+    CRF, // Creation Failed
+    NAR // No result
+}

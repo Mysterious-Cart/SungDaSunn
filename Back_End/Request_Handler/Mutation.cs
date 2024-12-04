@@ -10,14 +10,14 @@ public class Mutation{
         new GraphQLException(ErrorBuilder
                 .New()
                 .SetMessage("Session doesn't exist")
-                .SetCode("NAR")
+                .SetCode(errorCode.NAR.ToString())
                 .Build());
     
     GraphQLException InternalError = 
         new GraphQLException(ErrorBuilder
                 .New()
                 .SetMessage("Internal error catched.")
-                .SetCode("CRF")
+                .SetCode(errorCode.CRF.ToString())
                 .Build());
     
     [GraphQLDescription("Send a message to the given groupId")]
@@ -74,7 +74,7 @@ public class Mutation{
                 ErrorBuilder
                 .New()
                 .SetMessage("Username or Password is wrong")
-                .SetCode("NAR")
+                .SetCode(errorCode.NAR.ToString())
                 .Build());
     }
     public async Task<ulong> Add_Friend([Service] Crust_Service service, ulong senderId, ulong RequestTo_Id){
@@ -87,7 +87,3 @@ public class Mutation{
 
     
 }
-
-// CRF: Creation Failed.
-// ALE: Already Exist.
-// NAR: No Result.
