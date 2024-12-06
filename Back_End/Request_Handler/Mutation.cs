@@ -16,7 +16,7 @@ public class Mutation{
     GraphQLException InternalError = 
         new GraphQLException(ErrorBuilder
                 .New()
-                .SetMessage("Internal error catched.")
+                .SetMessage("Internal error detected.")
                 .SetCode(errorCode.CRF.ToString())
                 .Build());
     
@@ -28,8 +28,9 @@ public class Mutation{
         ulong SenderId,
         string Messages
     ){
+        var sentMessage = await _Service.sentMessage(GroupId, SenderId,Messages, DateTime.Now);
         return await _Service.AuthenticateSession(SessionId)? 
-        new Message_Result{ Sent = await _Service.sentMessage(GroupId, SenderId,Messages, DateTime.Now) }:
+        new Message_Result{Sent=sentMessage, Sent_Time = DateTime.Now}:
             throw SessionNoExistError;
     }
 
@@ -77,12 +78,17 @@ public class Mutation{
                 .SetCode(errorCode.NAR.ToString())
                 .Build());
     }
-    public async Task<ulong> Add_Friend([Service] Crust_Service service, ulong senderId, ulong RequestTo_Id){
+    public async Task<FriendRequest_Result> Add_Friend([Service] Crust_Service service, ulong senderId, ulong RequestTo_Id){
         return await service.addFriend(senderId, RequestTo_Id)??throw InternalError;
     }
-
-    public async Task<ulong> Confirm_FriendRequest([Service] Crust_Service service, ulong Requests_Id){
-        return await service.ConfirmFriendRequest(Requests_Id)??throw InternalError;
+    public async Task<ComfirmedFriend_Result> Confirm_FriendRequest([Service] Crust_Service service, ulong Requests_Id){
+        var result = await service.GetGroupById(await service.ConfirmFriendRequest(Requests_Id)??throw InternalError);
+        ComfirmedFriend_Result friend_Result =new ComfirmedFriend_Result{
+            Id = result.Id,
+            Users = result.Users,
+            Messages = [],
+        };
+        return friend_Result;
     }
 
     

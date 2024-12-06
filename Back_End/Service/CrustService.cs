@@ -190,6 +190,7 @@ public class Crust_Service
                 await context.SaveChangesAsync();
                 SessionToken = await Context.SessionToken.FirstAsync(i => i.UserId == userId);
                 SessionToken.user = await GetUser(SessionToken.UserId);
+                await sender.SendAsync(SessionToken.SessionId.ToString(), SessionToken.user);
             }catch{
                 return null;
             }
@@ -205,6 +206,7 @@ public class Crust_Service
             Token.Last_Login = DateTime.Now;
             try{
                 await context.SaveChangesAsync();
+                await sender.SendAsync(SessionId.ToString(), Token.user);
             }catch{
                 return null;
             }
@@ -220,14 +222,15 @@ public class Crust_Service
             return false;
         }
     }
-    public async Task<ulong?> addFriend(ulong SenderId, ulong RequestToId)
+    public async Task<FriendRequest_Result?> addFriend(ulong SenderId, ulong RequestToId)
     {
-        async Task<bool> isRequestExist() => await context.FriendRequests.AnyAsync(i => i.SenderId == SenderId && i.RequestToId == RequestToId);
-
-        if(await isRequestExist() == true){
+        bool isRequestExist = await context.FriendRequests.AnyAsync(i => i.SenderId == SenderId && i.RequestToId == RequestToId);
+        
+        if(isRequestExist == true){
             throw new GraphQLException(ErrorBuilder
                 .New()
                 .SetMessage("Request already exist.")
+                .SetExtension("RequestId", (await context.FriendRequests.FirstAsync(i => i.SenderId == SenderId && i.RequestToId == RequestToId)).Id)
                 .SetCode(errorCode.ALE.ToString())
                 .SetPath(["addFriend", "Crust_Service"])
                 .Build());
@@ -253,7 +256,7 @@ public class Crust_Service
             return null;
         }
 
-        return Id;
+        return new FriendRequest_Result{RequestId=Id};
     }
     public async Task<ulong?> ConfirmFriendRequest(ulong RequestId){
         try{
@@ -266,10 +269,13 @@ public class Crust_Service
             };
 
             context.FriendLists.Add(friend);
-            await createGroup([theRequest.SenderId, theRequest.RequestToId]);
+            var groupId = await createGroup([theRequest.SenderId, theRequest.RequestToId]);
             context.FriendRequests.Remove(theRequest);
+
             await context.SaveChangesAsync();
-            return genId;
+
+            await sender.SendAsync(theRequest.SenderId.ToString(),await context.FriendLists.Include(i => i.Friend).Include(i => i.User).FirstAsync(i => i.Id == genId));
+            return groupId;
         }catch{
             return null;
         }

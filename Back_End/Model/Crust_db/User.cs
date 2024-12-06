@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Back_End.Model.Crust_db
 {
-	public class User
+	public class User : IUser
 	{
 		[GraphQLType(typeof(UnsignedLongType))]
         public ulong Id { get; set; }
@@ -15,10 +15,12 @@ namespace Back_End.Model.Crust_db
 
 		[GraphQLType(typeof(EmailAddressType))]
 		public string Email { get; set; } = "";
+
 		public required string Password { get; set; }
 		
 		public ICollection<UserGroups>? Groups { get; set; }
 
+		[GraphQLIgnore]
 		public ICollection<Messages>? Messages {get; set;}
 
 		[GraphQLDescription("The list of user friend")]	
@@ -32,5 +34,6 @@ namespace Back_End.Model.Crust_db
 
 		[GraphQLDescription("The list of people, the user send friend request to.")]	
 		public ICollection<FriendRequest>? RequestsTo_List {get; set;}
+
 	}
 }

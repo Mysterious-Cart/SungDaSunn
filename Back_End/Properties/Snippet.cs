@@ -11,10 +11,6 @@ public static class Snippy{
     
 }
 
-public class Message_Result{
-    public bool Sent {get; set;}
-}
-
 public enum Approximate
 {
     close,
