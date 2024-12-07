@@ -10,3 +10,15 @@ public static class Snippy{
     }
     
 }
+
+public enum Approximate
+{
+    close,
+    exact,
+}
+
+public enum errorCode{
+    ALE, // Already Exist
+    CRF, // Creation Failed
+    NAR // No result
+}

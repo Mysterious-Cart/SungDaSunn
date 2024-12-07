@@ -6,6 +6,8 @@ using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
 using Back_End.Migrations;
+using System.Reflection.Metadata.Ecma335;
+using HotChocolate.Language;
 
 namespace Back_End;
 public class Crust_Service
@@ -24,13 +26,19 @@ public class Crust_Service
     {
         this.context = context;
         this.sender = sender;
-    }
+    }    
     public async Task<IQueryable<User>> GetUser()
     {
         var item = context.User
             .Include(i => i.Groups)
-            .Include(i => i.Friend)
-            .Include("Groups.GroupInfo");
+            .Include(i => i.Friends_List)
+            .Include(i => i.Friended_List)
+            .Include(i => i.RequestsFrom_List)
+            .Include(i => i.RequestsTo_List)
+            .Include("Groups.GroupInfo")
+            .Include("Friends_List.Friend")
+            .Include("Friended_List.User");
+
 
         return await Task.FromResult(item);
     }
@@ -42,7 +50,7 @@ public class Crust_Service
     }
     public async Task<IQueryable<User?>> GetFriendOfUser(ulong userId)
     {
-        var item = context.User.Include("Friend.Friend").SelectMany(i => i.Friend!.Select(i => i.Friend));
+        var item = context.User.Include("Friends_List.Friend").SelectMany(i => i.Friends_List!.Select(i => i.Friend));
         return await Task.FromResult(item);
     }
     public async Task<IQueryable<Messages>> GetMessagesFrom(ulong GroupId)
@@ -182,6 +190,7 @@ public class Crust_Service
                 await context.SaveChangesAsync();
                 SessionToken = await Context.SessionToken.FirstAsync(i => i.UserId == userId);
                 SessionToken.user = await GetUser(SessionToken.UserId);
+                await sender.SendAsync(SessionToken.SessionId.ToString(), SessionToken.user);
             }catch{
                 return null;
             }
@@ -191,27 +200,86 @@ public class Crust_Service
             return null;
         }
     }
-    public async Task<User?> loginViaSessionId(ulong SessionId){
+    public async Task<LoginToken?> loginViaSessionId(ulong SessionId){
         if(await context.SessionToken.AnyAsync(i => i.SessionId == SessionId) is true){
             var Token = await context.SessionToken.Include(i => i.user).FirstAsync(i => i.SessionId == SessionId);
             Token.Last_Login = DateTime.Now;
             try{
                 await context.SaveChangesAsync();
+                await sender.SendAsync(SessionId.ToString(), Token.user);
             }catch{
                 return null;
             }
-            return Token.user;
+            return Token;
         }else{
             return null;
         }
     }
+    public async Task<bool> AuthenticateSession(ulong SessionId){
+        if(await context.SessionToken.AnyAsync(i => i.SessionId == SessionId)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public async Task<FriendRequest_Result?> addFriend(ulong SenderId, ulong RequestToId)
+    {
+        bool isRequestExist = await context.FriendRequests.AnyAsync(i => i.SenderId == SenderId && i.RequestToId == RequestToId);
+        
+        if(isRequestExist == true){
+            throw new GraphQLException(ErrorBuilder
+                .New()
+                .SetMessage("Request already exist.")
+                .SetExtension("RequestId", (await context.FriendRequests.FirstAsync(i => i.SenderId == SenderId && i.RequestToId == RequestToId)).Id)
+                .SetCode(errorCode.ALE.ToString())
+                .SetPath(["addFriend", "Crust_Service"])
+                .Build());
+        }
+
+        var Id = generateId();
+        FriendRequest newFriendRequest = new FriendRequest{
+            Id = Id,
+            SenderId = SenderId,
+            RequestToId = RequestToId,
+        };
+
+        try{
+            await context.FriendRequests.AddAsync(newFriendRequest);
+            await context.SaveChangesAsync();
+            await sender.SendAsync(
+                RequestToId.ToString(), 
+                await context.FriendRequests
+                    .Include(i => i.Sender)
+                    .FirstAsync(i => i.Id == Id)
+            );
+        }catch{
+            return null;
+        }
+
+        return new FriendRequest_Result{RequestId=Id};
+    }
+    public async Task<ulong?> ConfirmFriendRequest(ulong RequestId){
+        try{
+            var theRequest = await context.FriendRequests.FirstAsync(i => i.Id == RequestId);
+            var genId = generateId();
+            FriendList friend = new FriendList{
+                Id = genId,
+                UserId = theRequest.SenderId,
+                FriendId = theRequest.RequestToId
+            };
+
+            context.FriendLists.Add(friend);
+            var groupId = await createGroup([theRequest.SenderId, theRequest.RequestToId]);
+            context.FriendRequests.Remove(theRequest);
+
+            await context.SaveChangesAsync();
+
+            await sender.SendAsync(theRequest.SenderId.ToString(),await context.FriendLists.Include(i => i.Friend).Include(i => i.User).FirstAsync(i => i.Id == genId));
+            return groupId;
+        }catch{
+            return null;
+        }
+        
+    }
     private ulong generateId() => (ulong)Snippy.LongRandom(0, 1000000000, new Random());
-
-
-}
-
-public enum Approximate
-{
-    close,
-    exact,
 }

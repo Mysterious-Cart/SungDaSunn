@@ -142,3 +142,4 @@ C:\Users\soeng\OneDrive\Documents\GitRepoForPos\SungDaSunn\SungDaSunn\Back_End\o
 C:\Users\soeng\OneDrive\Documents\GitRepoForPos\SungDaSunn\SungDaSunn\Back_End\obj\Debug\net8.0\Back_End.genruntimeconfig.cache
 C:\Users\soeng\OneDrive\Documents\GitRepoForPos\SungDaSunn\SungDaSunn\Back_End\obj\Debug\net8.0\ref\Back_End.dll
 C:\Users\soeng\OneDrive\Documents\GitRepoForPos\SungDaSunn\SungDaSunn\Back_End\bin\Debug\net8.0\HotChocolate.Types.Scalars.dll
+C:\Users\soeng\OneDrive\Documents\GitRepoForPos\SungDaSunn\SungDaSunn\Back_End\bin\Debug\net8.0\HotChocolate.Data.dll

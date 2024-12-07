@@ -7,31 +7,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Back_End.Model.Crust_db
 {
-	public class User
+	public class User : IUser
 	{
-        [GraphQLType(typeof(UnsignedLongType))]
-		[ID]
+		[GraphQLType(typeof(UnsignedLongType))]
         public ulong Id { get; set; }
 		public required string Name { get; set; }
 
 		[GraphQLType(typeof(EmailAddressType))]
 		public string Email { get; set; } = "";
+
 		public required string Password { get; set; }
 		
 		public ICollection<UserGroups>? Groups { get; set; }
 
+		[GraphQLIgnore]
 		public ICollection<Messages>? Messages {get; set;}
 
-		public ICollection<FriendList>? Friend {get; set;}
+		[GraphQLDescription("The list of user friend")]	
+		public ICollection<FriendList>? Friends_List {get; set;}
 
-		[GraphQLIgnore]
-		[AllowNull]
-		public ICollection<FriendList> _Friend {get; set;}
+		[GraphQLDescription("The list of people that befriended with user. In simple term, the list of people, that user have accepted as friend (accepted the friend request).")]	
+		public ICollection<FriendList>? Friended_List {get; set;}
 
-		public ICollection<FriendRequest>? RequestsFrom {get; set;}
+		[GraphQLDescription("The list of friend request. In simple term, the list of people that send friend request to user.")]	
+		public ICollection<FriendRequest>? RequestsFrom_List {get; set;}
 
-		[GraphQLIgnore]
-		[AllowNull]
-		public ICollection<FriendRequest> _RequestsTo {get; set;}
+		[GraphQLDescription("The list of people, the user send friend request to.")]	
+		public ICollection<FriendRequest>? RequestsTo_List {get; set;}
+
 	}
 }

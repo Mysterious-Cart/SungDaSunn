@@ -35,13 +35,20 @@ builder.Services
     .AddSubscriptionType<Subscription>()
     .AddMutationType<Mutation>()
     .AddMutationConventions()
-    .AddInMemorySubscriptions();
+    .AddInMemorySubscriptions()
+    .AddFiltering();
 
-builder.Services.AddDbContext<CrustDb_Context>(options =>
-{
-    options.UseMySql(builder.Configuration.GetConnectionString("Crust_DBConnection"),
-    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Crust_DBConnection")));
-});
+try{
+    builder.Services.AddDbContext<CrustDb_Context>(options =>
+    {
+        options.UseMySql(builder.Configuration.GetConnectionString("Crust_DBConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Crust_DBConnection")));
+    });
+}catch{
+    Console.WriteLine("Failed to connect to database.");
+}
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<Crust_Service>();

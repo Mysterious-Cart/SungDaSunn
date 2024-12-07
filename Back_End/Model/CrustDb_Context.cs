@@ -58,13 +58,13 @@ public class CrustDb_Context : DbContext
 
         var FriendList = modelBuilder.Entity<FriendList>();
         FriendList.HasKey(i => i.Id);
-        FriendList.HasOne(i => i.User).WithMany(i => i.Friend).HasForeignKey(i => i.UserId);
-        FriendList.HasOne(i => i.Friend).WithMany(i => i._Friend).HasForeignKey(i => i.FriendId);
+        FriendList.HasOne(i => i.User).WithMany(i => i.Friends_List).HasForeignKey(i => i.UserId);
+        FriendList.HasOne(i => i.Friend).WithMany(i => i.Friended_List).HasForeignKey(i => i.FriendId);
 
         var FriendRequest = modelBuilder.Entity<FriendRequest>();
         FriendRequest.HasKey(i => i.Id);
-        FriendRequest.HasOne(i => i.Sender).WithMany(i => i._RequestsTo).HasForeignKey(i => i.SenderId);
-        FriendRequest.HasOne(i => i.RequestTo).WithMany(i => i.RequestsFrom).HasForeignKey(i => i.RequestToId);
+        FriendRequest.HasOne(i => i.Sender).WithMany(i => i.RequestsTo_List).HasForeignKey(i => i.SenderId);
+        FriendRequest.HasOne(i => i.RequestTo).WithMany(i => i.RequestsFrom_List).HasForeignKey(i => i.RequestToId);
 
         var LoginToken = modelBuilder.Entity<LoginToken>();
         LoginToken.HasKey(i => i.SessionId);

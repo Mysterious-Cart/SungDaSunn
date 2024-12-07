@@ -5,14 +5,24 @@ namespace Back_End.Request_Handler
 {
     public class Query
     {
-        [GraphQLDescription("Get all user.")]
-        public async Task<IEnumerable<User>> GetUser([Service] Crust_Service service)
+        [GraphQLDescription("Get all user. avoid calling this query if not necessary. Get the result from Login(Mutation) instead.")]
+        public async Task<IQueryable<User>> GetUser([Service] Crust_Service service)
         {
             return await service.GetUser();
         }
-        public async Task<IEnumerable<Messages>> GetMessages([Service] Crust_Service service,[ID] ulong GroupId){
-            return await service.GetMessagesFrom(GroupId);
+        
+        [GraphQLDescription("Get message of a group")]
+        public async Task<IEnumerable<Messages>> GetMessages([Service] Crust_Service service,ulong SessionToken ,ulong GroupId){
+            return await service.AuthenticateSession(SessionToken)?await service.GetMessagesFrom(GroupId):
+                throw new GraphQLException(
+                            ErrorBuilder
+                            .New()
+                            .SetMessage("Session token doesn't exist")
+                            .SetCode("NAR")
+                            .Build());
         }
+        
+        [GraphQLDeprecated("It not necessary. Try accessing it through GetUser.friend instead")]
         public async Task<IEnumerable<User?>> GetFriendOfUser([Service] Crust_Service service,[ID] ulong UserId){
             return await service.GetFriendOfUser(UserId);
         }
@@ -28,6 +38,7 @@ namespace Back_End.Request_Handler
                             .Build());
         }
 
+        [GraphQLDeprecated("It not necessary. UserGroup is accessible through GetUser")]
         [GraphQLDescription("Get the GroupId that match the users specify in the array. (Return a perfect match, no more or no less user)")]
         public async Task<Group> GetGroupWithThisUser([Service] Crust_Service service, ulong[] users){
             return await service.GetGroupById(await service.GetGroupId(users));
