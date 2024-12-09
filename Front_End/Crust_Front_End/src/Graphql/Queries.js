@@ -16,13 +16,23 @@ export const Load_User = gql`
 `
 
 export const Get_User_Friend = gql`
-    query GetUser{
+    query{
         user{
+            id
             name
             groups{
-                groupInfo{
-                    name
+            groupId
+            }
+            friends_List{
+                friend{
                     id
+                    name
+                }
+            }
+            friended_List{
+                user{
+                    id
+                    name
                 }
             }
         }

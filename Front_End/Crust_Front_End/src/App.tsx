@@ -7,7 +7,7 @@ import { CssBaseline } from '@mui/material';
 import PathManager from './Pages/PathManager';
 
 const link = from([
-  new HttpLink({uri: "http://156.67.216.145:5276/graphql/"}),
+  new HttpLink({uri: "http://46.202.166.152:5276/graphql/"}),
 ]);
 
 const darkTheme = createTheme({
