@@ -3,9 +3,13 @@ import { TransitionGroup } from 'react-transition-group';
 import './ChatPanel.jsx.css'
 import { useEffect, useState } from "react";
 
+interface Messages{
+    Message: String
+}
+
 function ChatPanel(Messages){
 
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState<Messages[]>([])
 
     useEffect(() => {
 
@@ -18,7 +22,16 @@ function ChatPanel(Messages){
                     <ListItemAvatar sx={{width:"25px", height:"25px"}}>
                         <Avatar />
                     </ListItemAvatar>
-                    <ListItemText primary={<p style={{height:"10px"}}>nth <span style={{fontSize:"8pt",color:"gray"}}> 28/9/2021</span></p>} secondary={"how you feelign?"} />
+                    {
+                        messages.map((eachMessage) => 
+                        (
+                            <ListItemText 
+                                primary={
+                                    <p style={{height:"10px"}}>nth <span style={{fontSize:"8pt",color:"gray"}}> 28/9/2021</span></p>} 
+                                    secondary={eachMessage.Message} />
+                        ))
+                    }
+                    
                 </ListItem>
             </Collapse>
         </TransitionGroup>
